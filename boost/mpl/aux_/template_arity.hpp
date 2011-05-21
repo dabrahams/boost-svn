@@ -71,11 +71,6 @@ template< BOOST_MPL_AUX_NTTP_DECL(int, N) > struct arity_tag
     typedef char (&type)[N + 2];
 };
 
-template< BOOST_MPL_AUX_NTTP_DECL(int, N) > struct arity_tag1
-{
-    typedef char (&type)[N + 1];
-};
-
 #   define AUX778076_MAX_ARITY_OP(unused, state, i_) \
     ( BOOST_PP_CAT(C,i_) > 0 ? BOOST_PP_CAT(C,i_) : state ) \
 /**/
@@ -97,44 +92,17 @@ struct max_arity
 #   undef AUX778076_MAX_ARITY_OP
 
 arity_tag<-1>::type arity_helper(...);
-arity_tag1<0>::type arity_helper1(...);
 
 #   define BOOST_PP_ITERATION_LIMITS (1, AUX778076_ARITY)
 #   define BOOST_PP_FILENAME_1 <boost/mpl/aux_/template_arity.hpp>
 #   include BOOST_PP_ITERATE()
 
-template< typename F, BOOST_MPL_AUX_NTTP_DECL(int, N) >
-struct template_arity_impl
-{
-    BOOST_STATIC_CONSTANT(int, value = 
-          sizeof(::boost::mpl::aux::arity_helper1(type_wrapper<F>(),arity_tag1<N>())) - 1
-        );
-};
-
-#   define AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION(unused, i_, F) \
-    BOOST_PP_COMMA_IF(i_) template_arity_impl<F,BOOST_PP_INC(i_)>::value \
-/**/
-
-template <class T, int x, int y>
-struct same : is_same<int_<x>, int_<y> > {};
-
 template< typename F >
 struct template_arity
-{
-        BOOST_STATIC_CONSTANT(long, value = (sizeof(mpl::aux::arity_helper(type_wrapper<F>())) - 2));
-        
-    BOOST_STATIC_CONSTANT(int, svalue = (
-          max_arity< BOOST_MPL_PP_REPEAT(
-              AUX778076_ARITY
-            , AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION
-            , F
-            ) >::value
-        ));
-
-        BOOST_MPL_ASSERT(( mpl::aux::same<F, value, svalue> ));
-        
-    typedef mpl::int_<value> type;
-};
+  : int_<
+        (sizeof(mpl::aux::arity_helper(type_wrapper<F>())) - 2)
+        >
+{};
 
 #   undef AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION
 
@@ -200,13 +168,6 @@ template<
     >
 typename arity_tag<i_>::type
 arity_helper(type_wrapper< F<BOOST_MPL_PP_PARAMS(i_, T)> >);
-
-template<
-      template< BOOST_MPL_PP_PARAMS(i_, typename P) > class F
-    , BOOST_MPL_PP_PARAMS(i_, typename T)
-    >
-typename arity_tag1<i_>::type
-arity_helper1(type_wrapper< F<BOOST_MPL_PP_PARAMS(i_, T)> >, arity_tag1<i_>);
 
 #undef i_
 #endif // BOOST_PP_IS_ITERATING
