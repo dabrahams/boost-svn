@@ -65,7 +65,7 @@ namespace boost { namespace mpl { namespace aux {
 
 template< BOOST_MPL_AUX_NTTP_DECL(int, N) > struct arity_tag
 {
-    typedef char (&type)[N + 1];
+    typedef char (&type)[N + 2];
 };
 
 #   define AUX778076_MAX_ARITY_OP(unused, state, i_) \
@@ -88,37 +88,18 @@ struct max_arity
 
 #   undef AUX778076_MAX_ARITY_OP
 
-arity_tag<0>::type arity_helper(...);
+arity_tag<-1>::type arity_helper(...);
 
 #   define BOOST_PP_ITERATION_LIMITS (1, AUX778076_ARITY)
 #   define BOOST_PP_FILENAME_1 <boost/mpl/aux_/template_arity.hpp>
 #   include BOOST_PP_ITERATE()
 
-template< typename F, BOOST_MPL_AUX_NTTP_DECL(int, N) >
-struct template_arity_impl
-{
-    BOOST_STATIC_CONSTANT(int, value = 
-          sizeof(::boost::mpl::aux::arity_helper(type_wrapper<F>(),arity_tag<N>())) - 1
-        );
-};
-
-#   define AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION(unused, i_, F) \
-    BOOST_PP_COMMA_IF(i_) template_arity_impl<F,BOOST_PP_INC(i_)>::value \
-/**/
-
 template< typename F >
 struct template_arity
-{
-    BOOST_STATIC_CONSTANT(int, value = (
-          max_arity< BOOST_MPL_PP_REPEAT(
-              AUX778076_ARITY
-            , AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION
-            , F
-            ) >::value
-        ));
-        
-    typedef mpl::int_<value> type;
-};
+  : int_<
+        (sizeof(mpl::aux::arity_helper(type_wrapper<F>())) - 2)
+        >
+{};
 
 #   undef AUX778076_TEMPLATE_ARITY_IMPL_INVOCATION
 
@@ -183,7 +164,7 @@ template<
     , BOOST_MPL_PP_PARAMS(i_, typename T)
     >
 typename arity_tag<i_>::type
-arity_helper(type_wrapper< F<BOOST_MPL_PP_PARAMS(i_, T)> >, arity_tag<i_>);
+arity_helper(type_wrapper< F<BOOST_MPL_PP_PARAMS(i_, T)> >);
 
 #undef i_
 #endif // BOOST_PP_IS_ITERATING
