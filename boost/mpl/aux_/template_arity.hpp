@@ -20,7 +20,6 @@
 
 #include <boost/mpl/aux_/config/ttp.hpp>
 #include <boost/mpl/aux_/config/lambda.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #if !defined(BOOST_MPL_PREPROCESSING_MODE)
 #   include <boost/mpl/aux_/template_arity_fwd.hpp>
@@ -53,8 +52,6 @@
 #   include <boost/mpl/aux_/preprocessor/repeat.hpp>
 #   include <boost/mpl/aux_/preprocessor/params.hpp>
 #   include <boost/mpl/aux_/nttp_decl.hpp>
-
-#   include <boost/mpl/assert.hpp>
 
 #   include <boost/preprocessor/seq/fold_left.hpp>
 #   include <boost/preprocessor/comma_if.hpp>
